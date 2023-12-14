@@ -2,7 +2,7 @@ const { query } = require("../../../utils/mysql")
 
 const findAll = async () => {
     const sql = `
-        SELECT Item.id,Item.stock, Item.status, Item.descripcion, Item.estado, Producto.titulo, Plataforma.plataforma
+        SELECT Item.id, Item.status, Item.descripcion, Item.estado, Producto.titulo, Plataforma.plataforma
         FROM Item
         JOIN Producto ON Item.producto_fk = Producto.id
         JOIN Plataforma ON Item.plataforma_fk = Plataforma.id
@@ -43,14 +43,13 @@ const save = async (item) => {
         !item.status)
         throw Error("Missing Fields");
 
-    const sql = `INSERT INTO Item (estado, producto_fk, descripcion, plataforma_fk, status, stock) VALUES(?,?,?,?,?,?)`;
+    const sql = `INSERT INTO Item (estado, producto_fk, descripcion, plataforma_fk, status) VALUES(?,?,?,?,?)`;
     const { insertedId } = await query(sql, [
         item.estado,
         item.productoId,
         item.descripcion,
         item.plataformaId,
-        item.status,
-        item.stock || 0
+        item.status
     ]);
     return { ...item, id: insertedId };
 }
@@ -61,12 +60,11 @@ const update = async (item, id) => {
         throw Error("Missing Fields");
     }
 
-    const sql = `UPDATE Item SET descripcion=?, producto_fk=?, plataforma_fk=?, stock=? WHERE id=?`;
+    const sql = `UPDATE Item SET descripcion=?, producto_fk=?, plataforma_fk=? WHERE id=?`;
     await query(sql, [
         item.descripcion,
         item.productoId,
         item.plataformaId,
-        item.stock || 0,
         id
     ]);
 
